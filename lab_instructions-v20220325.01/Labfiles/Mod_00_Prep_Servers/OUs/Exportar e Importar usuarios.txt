@@ -144,13 +144,13 @@ Get-ADUser -Filter * -Properties Name,UserPrincipalName,Enabled,distinguishedNam
 # Importar usuarios
 
 Csvde -i -f C:\usuariosDev.csv –k
-Csvde -i -f C:\usuariosIT.csv –k
 Csvde -i -f C:\usuariosMan.csv -k
-Csvde -i -f C:\usuariosMark.csv –k
-Csvde -i -f C:\usuariosSal.csv –k
+Csvde -i -f C:\usuariosIT.csv
+Csvde -i -f C:\usuariosMark.csv
+Csvde -i -f C:\usuariosSal.csv
 
 # Todas las cuentas de usuario están deshabilitadas. Puede habilitarlos manualmente o usando el siguiente resumen de PowerShell:
 
 
-Get-ADUser -Filter 'Name -like "*"' -SearchBase "OU=Users,OU=Munich,OU=DE,DC=theitbros,DC=com" | Enable-ADAccount
+Get-ADUser -Filter 'Name -like "*"' -SearchBase "OU=Marketing,DC=contoso,DC=com" | Enable-ADAccount
 
