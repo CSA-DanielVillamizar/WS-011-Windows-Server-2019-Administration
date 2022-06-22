@@ -1,0 +1,12 @@
+List disk 
+Select disk 1
+attributes disk clear readonly
+online disk noerr
+Convert dynamic
+Select disk 2
+attributes disk clear readonly
+online disk noerr
+Convert dynamic
+create volume mirror disk=1,2
+format fs=ntfs quick label "Mirrored Volume"
+Assign letter=M:
