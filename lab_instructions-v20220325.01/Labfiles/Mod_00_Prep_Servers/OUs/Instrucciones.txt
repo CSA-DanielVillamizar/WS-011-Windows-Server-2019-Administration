@@ -1,0 +1,156 @@
+# OUs en el dominio
+
+Development
+IT
+Managers
+Marketing
+Sales
+
+
+CSVDE es una herramienta de línea de comandos que le permite importar y exportar objetos de Active Directory desde / hacia archivos de texto CSV (valores separados por comas) o archivos de Excel. La herramienta csvde es simplemente insustituible cuando necesita crear, exportar o migrar cientos de usuarios de AD.
+
+La utilidad csvde se instala automáticamente en Windows Server cuando se promueve a un controlador de dominio, durante la instalación de los roles de Servicios de dominio de Active Directory (AD DS) o Servicios de directorio ligero de Active Directory (AD LDS). También puede instalar la herramienta a través de las Herramientas de administración de servidor remoto (RSAT).
+
+Para obtener todas las opciones y la sintaxis de la utilidad csvde, simplemente ejecute este comando en el símbolo del sistema:
+Intercambio de directorios CSV
+
+Parametros generales
+
+==================
+
+-i Activar el modo de importación (el valor predeterminado es Exportar)
+
+-f nombre de archivo Nombre de archivo de entrada o salida
+
+-s servername El servidor al que enlazar (predeterminado en DC del dominio de la computadora)
+
+-v Activar el modo detallado
+
+-c FromDN ToDN Reemplazar ocurrencias de FromDN a ToDN
+
+-j ruta Ubicación del archivo de registro
+
+-t puerto Número de puerto (predeterminado = 389)
+
+-u Usar formato Unicode
+
+-h Habilita la firma y el cifrado de la capa SASL
+
+-? Ayudar
+
+Exportación específica
+
+===============
+
+-d RootDN La raíz de la búsqueda LDAP (predeterminado para el contexto de nomenclatura)
+
+-r Filtro filtro de búsqueda LDAP (predeterminado a "(objectClass = *)")
+
+-p Alcance de búsqueda de SearchScope (Base / OneLevel / Subtree)
+
+-l lista Lista de atributos (separados por comas) para buscar en un
+
+Búsqueda LDAP
+
+-o lista Lista de atributos (separados por comas) para omitir de la entrada.
+
+-g Desactiva la búsqueda paginada.
+
+-m Habilita la lógica SAM al exportar.
+
+-n No exporta valores binarios
+
+Importar
+
+======
+
+-k La importación continuará ignorando 'Violación de restricciones' y
+
+Errores "El objeto ya existe"
+
+Establecimiento de credenciales
+
+=========================
+
+Tenga en cuenta que si no se especifica ninguna credencial, CSVDE se vinculará como el actual
+
+usuario registrado, usando SSPI.
+
+-un UserDN [Password | *] Autenticación simple
+
+-b Dominio de nombre de usuario [Password | *] Método de enlace SSPI
+
+Ejemplo: Importación simple del dominio actual
+
+csvde -i -f ENTRADA.CSV
+
+Ejemplo: exportación simple del dominio actual
+
+csvde -f SALIDA.CSV
+
+Ejemplo: Exportación de un dominio específico con credenciales
+
+csvde -m -f SALIDA.CSV
+
+-b NOMBRE DE USUARIO NOMBRE DE DOMINIO *
+
+-s SERVERNAME
+
+-d "cn = usuarios, DC = DOMAINNAME, DC = Microsoft, DC = Com"
+
+-r "(objectClass = usuario)"
+
+No se escribieron archivos de registro. Para generar un archivo de registro,
+
+especifique la ruta del archivo de registro mediante la opción -j.
+
+# Exportar usuarios de la OU usando CSVDE
+
+
+CSVDE -d "OU=Development,DC=contoso,DC=com" -r objectClass=user -f c:/usuariosDev.csv
+CSVDE -d "OU=IT,DC=contoso,DC=com" -r objectClass=user -f c:/usuariosIT.csv
+CSVDE -d "OU=Managers,DC=contoso,DC=com" -r objectClass=user -f c:/usuariosMan.csv
+CSVDE -d "OU=Marketing,DC=contoso,DC=com" -r objectClass=user -f c:/usuariosMark.csv
+CSVDE -d "OU=Sales,DC=contoso,DC=com" -r objectClass=user -f c:/usuariosSal.csv
+
+
+# Obtener los usuarios dentro de una OU que contiene otra OU (Madrid/clientes)
+
+CSVDE -d "OU=Madrid,OU=Clientes,DC=contoso,DC=com" -r objectClass=user -f c:/usuarios.csv 
+
+# Exportar todos los usuarios
+Vamos a exportar todos los usuarios del dominio pero en esta ocasión sólo queremos que nos exporte a Excel una serie de atributos del usuario en concreto. Para nuestro ejemplo, exportaremos sólo los atributos (podremos definir los que necesitemos) Name, UserPrincipalName, Enabled, distinguishedName. Para ello ejecutaremos el siguiente comando en la consola de PowerShell:
+
+Get-ADUser -Filter * -Properties Name,UserPrincipalName,Enabled,distinguishedName | Select-Object Name,UserPrincipalName,Enabled,distinguishedName | Export-CSV 'c:\Usuarios.csv'
+
+
+# Exportar usuarios de una OU
+
+En el caso de querer obtener la misma información pero en este caso de una OU en concreto, para nuestro ejemplo será la OU Clientes, tendremos que ejecutar el comando de la siguiente forma:
+
+Get-ADUser -Filter * -SearchBase "OU=Clientes,DC=dominio,DC=com" -Properties Name,UserPrincipalName,Enabled,distinguishedName | Select-Object Name,UserPrincipalName,Enabled,distinguishedName | Export-CSV 'c:\Usuarios.csv' 
+
+
+Si queremos rizar un poco más el rizo y queremos obtener los usuarios que se encuentran dentro de una OU que a su vez se encuentra dentro de otra tendremos que ir agregando las OU dentro del parámetro «SearchBase» de atrás hacia adelante. En nuestro ejemplo obtendremos los usuarios que se encuentran dentro de la OU Madrid que su vez se encuentra dentro de la OU Clientes.
+
+Get-ADUser -Filter * -SearchBase "OU=Madrid,OU=Clientes,DC=contoso,DC=com" -Properties Name,UserPrincipalName,Enabled,distinguishedName | Select-Object Name,UserPrincipalName,Enabled,distinguishedName | Export-CSV 'c:\Usuarios.csv'  
+
+# Exportar todos los usuarios excepto de una OU concreta
+Si queremos obtener todos los usuarios de nuestro Active Directory excepto los que se encuentren dentro de una OU concreta, para nuestro ejemplo será la OU Clientes, tendremos que ejecutar el comando de la siguiente forma:
+
+Get-ADUser -Filter * -Properties Name,UserPrincipalName,Enabled,distinguishedName | Select-Object Name,UserPrincipalName,Enabled,distinguishedName | where {$_.DistinguishedName -notlike “*OU=Clientes,DC=contoso,DC=com"} | Export-CSV 'c:\Usuarios.csv'
+
+
+# Importar usuarios
+
+Csvde -i -f c:/usuariosDev –k
+Csvde -i -f c:/usuariosIT –k
+Csvde -i -f c:/usuariosMan –k
+Csvde -i -f c:/usuariosMark –k
+Csvde -i -f c:/usuariosSal –k
+
+# Todas las cuentas de usuario están deshabilitadas. Puede habilitarlos manualmente o usando el siguiente resumen de PowerShell:
+
+
+Get-ADUser -Filter 'Name -like "*"' -SearchBase "OU=Users,OU=Munich,OU=DE,DC=theitbros,DC=com" | Enable-ADAccount
+

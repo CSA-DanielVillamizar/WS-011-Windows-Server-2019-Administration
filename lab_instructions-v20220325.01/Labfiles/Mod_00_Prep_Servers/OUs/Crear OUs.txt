@@ -1,0 +1,44 @@
+# Con cmdlets
+
+New-ADOrganizationalUnit -DisplayName "Development" -Name "Development" -path "DC=contoso,DC=com"
+
+New-ADOrganizationalUnit -DisplayName "Marketing" -Name "Marketing" -path "OU=Development,DC=contoso,DC=com"
+
+# Podemos simplificar y acortar algo la sintaxis declarando una variable que apunte al dominio.
+
+$miDominio="DC=contoso,DC=com"
+
+New-ADOrganizationalUnit -DisplayName "Administracion" -Name "Administracion" -path ("OU=Development," + $miDominio)
+
+# Crear OUs a traves de Función ***
+
+# Podemos ir añadiendo tantas líneas como OU’s tenga nuestra estructura, o lo podemos hacer de una forma algo más elegante con una función que se encargue de crear cada OU, y compruebe en cada caso si existe o no.
+
+Import-Module ActiveDirectory
+
+$miDominio="DC=contoso,DC=com"
+
+CrearOU "Development" $miDominio
+CrearOU "IT" $miDominio
+CrearOU "Development" $miDominio
+CrearOU "Managers" $miDominio
+CrearOU "Marketing" $miDominio
+CrearOU "Sales" $miDominio
+# CrearOU "Marketing" ("OU=Development,"+$miDominio)
+# CrearOU "Administracion" ("OU=Development,"+$miDominio)
+
+function CrearOU
+{
+   $NombreOU = $args[0]
+   $miDominio = $args[1]
+   $rutaOU = ("OU="+$NombreOU+","+$miDominio)
+   if ([adsi]::Exists(("LDAP://" + $rutaOU))) 
+   {
+      write-host ("La Unidad Organizativa " + $NombreOU + " ya existe") -ForegroundColor Red
+   } 
+   else
+   {
+      write-host ("Creando la OU "+$NombreOU + " en la ruta "+ $miDominio) -ForegroundColor Green
+      new-ADOrganizationalUnit -DisplayName $NombreOU -Name $NombreOU -path $miDominio
+   }
+}
