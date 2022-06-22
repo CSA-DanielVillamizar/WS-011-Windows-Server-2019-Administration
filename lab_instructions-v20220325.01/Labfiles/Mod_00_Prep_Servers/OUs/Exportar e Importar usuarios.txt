@@ -151,6 +151,9 @@ Csvde -i -f C:\usuariosSal.csv
 
 # Todas las cuentas de usuario están deshabilitadas. Puede habilitarlos manualmente o usando el siguiente resumen de PowerShell:
 
-
 Get-ADUser -Filter 'Name -like "*"' -SearchBase "OU=Marketing,DC=contoso,DC=com" | Enable-ADAccount
+Get-ADUser -Filter 'Name -like "*"' -SearchBase "OU=Development,DC=contoso,DC=com" | Enable-ADAccount
+Get-ADUser -Filter 'Name -like "*"' -SearchBase "OU=IT,DC=contoso,DC=com" | Enable-ADAccount
+Get-ADUser -Filter 'Name -like "*"' -SearchBase "OU=Managers,DC=contoso,DC=com" | Enable-ADAccount
+Get-ADUser -Filter 'Name -like "*"' -SearchBase "OU=Sales,DC=contoso,DC=com" | Enable-ADAccount
 

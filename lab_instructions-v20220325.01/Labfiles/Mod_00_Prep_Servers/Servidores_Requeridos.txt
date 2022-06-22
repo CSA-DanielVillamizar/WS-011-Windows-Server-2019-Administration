@@ -1,0 +1,8 @@
+SEA-DC1 (Windows Server 2019 Datacenter Windows Experience)
+SEA-ADM1 (Windows Server 2019 Datacenter Windows Experience): AD CS, AD DS, DH CP, DNS, Hyper-V (SEA-CORE1), IIS
+SEA-CL1 (Windows 10 Enterprise)
+SEA-RDS1 (Windows Server 2019 Datacenter Windows Experience)
+SEA-SVR2 (Windows Server 2019 Datacenter (Core))
+SEA-SVR2 (Windows Server 2019 Datacenter (Core))
+SEA-SVR3 (Windows Server 2019 Datacenter (Core))
+SEA-SVR4 (Windows Server 2019 Datacenter (Core))
